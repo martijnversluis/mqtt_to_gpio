@@ -9,7 +9,7 @@ module MqttToGpio
     end
 
     def run!
-      Parallel.each([*watchers, listener], &:run!)
+      Parallel.each([*watchers, listener].compact, &:run!)
     end
 
     private
