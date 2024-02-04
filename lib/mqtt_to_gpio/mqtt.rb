@@ -12,6 +12,13 @@ module MqttToGpio
       end
 
       def connect(host:, port:, username:, password:, &block)
+        using_password = !(password.nil? || password.empty?)
+        logged_password = using_password ? "<REDACTED>" : "<NONE>"
+
+        MqttToGpio.logger.debug <<~MESSAGE
+          Connecting to MQTT broker at #{host}:#{port} using username #{username} and password #{logged_password}
+        MESSAGE
+
         ::MQTT::Client.connect(host: host, port: port, username: username, password: password, &block)
       end
 
@@ -32,7 +39,7 @@ module MqttToGpio
       end
 
       def listen(&_block)
-        ::MQTT::Client.connect(host: host, port: port, username: username, password: password) do |client|
+        connect(host: host, port: port, username: username, password: password) do |client|
           client.subscribe(topic)
           topic_regex = build_topic_regex(topic)
           wait_for_messages(client, topic_regex)
