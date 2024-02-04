@@ -17,7 +17,7 @@ module MqttToGpio
     def run!
       Gpio.pin(pin, Gpio::INPUT) do |gpio_pin|
         @previous_value = gpio_pin.value
-        MqttToGpio.logger.debug "Starting watcher for #{name} (pin #{gpio_pin}), initial value: #{previous_value}"
+        MqttToGpio.logger.debug "Starting watcher for #{name} (pin #{pin}), initial value: #{previous_value}"
 
         loop do
           sleep(polling_interval_in_seconds)
