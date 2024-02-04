@@ -55,11 +55,7 @@ module MqttToGpio
       end
 
       def value
-        MqttToGpio.logger.debug "Reading value of pin #{number}"
-
-        File.read(value_path).strip.tap do |value|
-          MqttToGpio.logger.debug "Reading value of pin #{number} succeeded: #{value}"
-        end
+        File.read(value_path).strip
       end
 
       def value=(value)
