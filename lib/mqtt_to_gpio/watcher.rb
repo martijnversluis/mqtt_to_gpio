@@ -45,14 +45,14 @@ module MqttToGpio
 
       if value_changed?
         handle_value_changed
-      elsif hold? && pin_on?
+      elsif hold? && pin_high?
         handle_pin_held
       end
     end
 
     def handle_value_changed
       MqttToGpio.logger.debug "Value changed for #{name} (pin #{pin}) from #{previous_value} to #{current_value}"
-      @hold_count = 0 if pin_off?
+      @hold_count = 0 if pin_low?
       publisher.publish_state(name, current_value)
     end
 
