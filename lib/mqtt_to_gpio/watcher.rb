@@ -16,11 +16,19 @@ module MqttToGpio
     def run!
       Gpio.pin(pin, Gpio::INPUT) do |pin|
         @last_state = pin.value
-        loop { poll_pin(pin) }
+
+        loop do
+          sleep(polling_interval_in_seconds)
+          poll_pin(pin)
+        end
       end
     end
 
     private
+
+    def polling_interval_in_seconds
+      POLLING_INTERVAL_IN_MS / 1000.0
+    end
 
     def poll_pin(pin)
       current_value = pin.value
