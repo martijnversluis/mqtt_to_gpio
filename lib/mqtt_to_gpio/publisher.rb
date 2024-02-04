@@ -22,6 +22,8 @@ module MqttToGpio
 
     private
 
+    attr_reader :host, :port, :username, :password, :topic_prefix
+
     def publish(device_id, state)
       Mqtt.publish(
         host: host,
