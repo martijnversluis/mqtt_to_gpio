@@ -20,14 +20,16 @@ module MqttToGpio
       configuration
         .fetch("inputs", [])
         .tap { |inputs| MqttToGpio.logger.debug "Initializing #{inputs.size} watchers" }
-        .map do |input|
-          Watcher.new(
-            pin: input.fetch("pin"),
-            name: input.fetch("name"),
-            hold: input.fetch("hold", false),
-            publisher: publisher
-          )
-        end
+        .map(&method(:build_watcher))
+    end
+
+    def build_watcher(input)
+      Watcher.new(
+        pin: input.fetch("pin"),
+        name: input.fetch("name"),
+        hold: input.fetch("hold", false),
+        publisher: publisher
+      )
     end
 
     def listener
@@ -57,7 +59,7 @@ module MqttToGpio
           port: config.fetch("port", nil),
           username: config.fetch("username", nil),
           password: config.fetch("password", nil),
-          topic_prefix: config.fetch("topic_prefix"),
+          topic_prefix: config.fetch("topic_prefix")
         }
       end
     end

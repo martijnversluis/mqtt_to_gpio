@@ -59,14 +59,15 @@ module MqttToGpio
             yield_matched_message(match, message_topic, payload, &block)
           else
             MqttToGpio.logger.debug "Received message on topic #{message_topic} " \
-                         "that does not match the expected pattern"
+                                    "that does not match the expected pattern"
           end
         end
       end
 
       def yield_matched_message(match, message_topic, payload, &_block)
         device_id = match[1]
-        MqttToGpio.logger.debug "Received message for device #{device_id} on topic #{message_topic} with payload #{payload}"
+        MqttToGpio.logger.debug "Received message for device #{device_id} " \
+                                "on topic #{message_topic} with payload #{payload}"
         yield(message_topic, device_id, payload)
       end
 

@@ -17,7 +17,7 @@ module MqttToGpio
 
       pin = output.fetch("pin")
       MqttToGpio.logger.info("Setting #{device_id} (pin #{pin}) to #{desired_state}")
-      Gpio.pin(pin, Gpio::OUTPUT) { |pin| pin.value = desired_state }
+      Gpio.pin(pin, Gpio::OUTPUT) { |p| p.value = desired_state }
       MqttToGpio.logger.info("Setting #{device_id} (pin #{pin}) to #{desired_state} succeeded")
     end
 
