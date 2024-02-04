@@ -15,7 +15,7 @@ module MqttToGpio
     end
 
     def publish_state(device_id, state)
-      publish(device_id, { state: state })
+      publish(device_id, { state: translate_state(state) })
     end
 
     def publish_hold(device_id, hold_count)
@@ -37,6 +37,17 @@ module MqttToGpio
         topic: "#{topic_prefix}/input/#{device_id}",
         payload: state.to_json
       )
+    end
+
+    def translate_state(state)
+      case state
+      when Gpio::HIGH
+        "ON"
+      when Gpio::LOW
+        "OFF"
+      else
+        raise ArgumentError, "Unknown state: #{state}"
+      end
     end
   end
 end
