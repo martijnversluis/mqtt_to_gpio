@@ -14,6 +14,7 @@ module MqttToGpio
       Pin
         .new(number)
         .tap(&:export)
+        .tap { sleep 0.1 }
         .tap { |pin| pin.direction = direction }
         .tap(&block)
         .tap(&:unexport)
