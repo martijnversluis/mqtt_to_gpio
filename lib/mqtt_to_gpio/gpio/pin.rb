@@ -10,11 +10,15 @@ module MqttToGpio
       end
 
       def export
-        File.write(Gpio::EXPORT_PATH, number)
+        with_retry(Errno::EBUSY) do
+          File.write(Gpio::EXPORT_PATH, number)
+        end
       end
 
       def unexport
-        File.write(Gpio::UNEXPORT_PATH, number)
+        with_retry(Errno::EBUSY) do
+          File.write(Gpio::UNEXPORT_PATH, number)
+        end
       end
 
       def direction
@@ -66,6 +70,17 @@ module MqttToGpio
       end
 
       private
+
+      def with_retry(rescued_exceptions, attempts: 5, wait: 0.1, &_block)
+        attempts.times do
+          yield
+          return
+        rescue *rescued_exceptions
+          sleep wait
+        end
+
+        raise "Failed to perform operation after #{attempts} attempts"
+      end
 
       def value_path
         path("value")
