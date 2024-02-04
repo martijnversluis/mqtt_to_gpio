@@ -1,14 +1,22 @@
 # frozen_string_literal: true
 
+require "logger"
 require "yaml"
 
 module MqttToGpio
-  def run!(config_file)
-    config = YAML.load_file(config_file)
-    Server.new(config).run!
-  end
+  class << self
+    attr_writer :logger
 
-  module_function :run!
+    def logger
+      @logger ||= Logger.new($stdout)
+    end
+
+    def run!(config_file)
+      config = YAML.load_file(config_file)
+      logger.debug "Starting server with configuration: #{config}"
+      Server.new(config).run!
+    end
+  end
 end
 
 require_relative "mqtt_to_gpio/gpio"
