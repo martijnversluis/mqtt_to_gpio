@@ -33,7 +33,7 @@ module MqttToGpio
     end
 
     def poll_pin(gpio_pin)
-      @previous_value = @current_value
+      @previous_value = @current_value if @current_value
       @current_value = gpio_pin.value
 
       if value_changed?
