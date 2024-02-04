@@ -10,15 +10,13 @@ module MqttToGpio
       end
 
       def export
-        with_retry(Errno::EBUSY) do
-          File.write(Gpio::EXPORT_PATH, number)
-        end
+        File.write(Gpio::EXPORT_PATH, number)
+      rescue Errno::EBUSY
+        # Already exported
       end
 
       def unexport
-        with_retry(Errno::EBUSY) do
-          File.write(Gpio::UNEXPORT_PATH, number)
-        end
+        File.write(Gpio::UNEXPORT_PATH, number)
       end
 
       def direction
