@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.bindir = "bin"
-  spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
+  spec.executables = ["mqtt_to_gpio"]
   spec.require_paths = ["lib"]
 
   spec.add_dependency "mqtt", "~> 0.6"
