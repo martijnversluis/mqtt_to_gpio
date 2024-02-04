@@ -45,8 +45,13 @@ module MqttToGpio
 
     def handle_pin_held
       @hold_count += 1
-      MqttToGpio.logger.debug "Value held for #{name} (pin #{pin}) at #{current_value} for #{@hold_count} intervals"
-      publisher.publish_hold(name, @hold_count) if (@hold_count % hold_interval).zero?
+
+      return unless (@hold_count % hold_interval).zero?
+
+      hold_index = @hold_count / hold_interval
+      MqttToGpio.logger.debug "Value held for #{name} (pin #{pin}) " \
+                              "at #{current_value} for #{hold_index} intervals"
+      publisher.publish_hold(name, hold_index)
     end
 
     def handle_value_changed
