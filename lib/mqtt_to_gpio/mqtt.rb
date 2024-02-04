@@ -38,25 +38,36 @@ module MqttToGpio
         @password = password
       end
 
-      def listen(&_block)
+      def listen(&block)
         connect(host: host, port: port, username: username, password: password) do |client|
+          logger.debug "Subscribing to topic #{topic}"
           client.subscribe(topic)
           topic_regex = build_topic_regex(topic)
-          wait_for_messages(client, topic_regex)
+          wait_for_messages(client, topic_regex, &block)
         end
       end
 
       private
 
-      def wait_for_messages(client, topic_regex)
+      def wait_for_messages(client, topic_regex, &block)
+        logger.debug "Waiting for messages on topic #{topic_regex}"
+
         client.get do |message_topic, payload|
           match = topic_regex.match(message_topic)
 
           if match
-            device_id = match[1]
-            yield(message_topic, device_id, payload)
+            yield_matched_message(match, message_topic, payload, &block)
+          else
+            logger.debug "Received message on topic #{message_topic} " \
+                         "that does not match the expected pattern"
           end
         end
+      end
+
+      def yield_matched_message(match, message_topic, payload, &_block)
+        device_id = match[1]
+        logger.debug "Received message for device #{device_id} on topic #{message_topic} with payload #{payload}"
+        yield(message_topic, device_id, payload)
       end
 
       attr_reader :host, :port, :topic, :username, :password

@@ -15,12 +15,13 @@ module MqttToGpio
     end
 
     def run!
-      Gpio.pin(pin, Gpio::INPUT) do |pin|
-        @previous_value = pin.value
+      Gpio.pin(pin, Gpio::INPUT) do |gpio_pin|
+        @previous_value = gpio_pin.value
+        logger.debug "Starting watcher for #{name} (pin #{gpio_pin}), initial value: #{previous_value}"
 
         loop do
           sleep(polling_interval_in_seconds)
-          poll_pin(pin)
+          poll_pin(gpio_pin)
         end
       end
     end
@@ -31,17 +32,27 @@ module MqttToGpio
       POLLING_INTERVAL_IN_MS / 1000.0
     end
 
-    def poll_pin(pin)
+    def poll_pin(gpio_pin)
       @previous_value = @current_value
-      @current_value = pin.value
+      @current_value = gpio_pin.value
 
       if value_changed?
-        @hold_count = 0 if pin_off?
-        publisher.publish_state(name, current_value)
+        handle_value_changed
       elsif hold? && pin_on?
-        @hold_count += 1
-        publisher.publish_hold(name, @hold_count) if (@hold_count % hold_interval).zero?
+        handle_pin_held
       end
+    end
+
+    def handle_pin_held
+      @hold_count += 1
+      logger.debug "Value held for #{name} (pin #{pin}) at #{current_value} for #{@hold_count} intervals"
+      publisher.publish_hold(name, @hold_count) if (@hold_count % hold_interval).zero?
+    end
+
+    def handle_value_changed
+      logger.debug "Value changed for #{name} (pin #{pin}) from #{previous_value} to #{current_value}"
+      @hold_count = 0 if pin_off?
+      publisher.publish_state(name, current_value)
     end
 
     attr_reader :pin, :name, :hold, :publisher, :previous_value, :current_value

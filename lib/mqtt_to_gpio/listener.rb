@@ -19,6 +19,7 @@ module MqttToGpio
         password: password,
         topic: "#{topic_prefix}/output/#/set"
       ).listen do |_topic, device_id, message|
+        logger.debug "Received MQTT message for #{device_id} with desired state #{message}"
         handler.handle_message(device_id, message)
       end
     end

@@ -17,29 +17,29 @@ module MqttToGpio
     attr_reader :configuration
 
     def watchers
-      configuration.fetch("inputs", []).map do |input|
-        Watcher.new(
-          pin: input.fetch("pin"),
-          name: input.fetch("name"),
-          hold: input.fetch("hold", false),
-          publisher: publisher
-        )
-      end
+      configuration
+        .fetch("inputs", [])
+        .tap { |inputs| logger.debug "Initializing #{inputs.size} watchers" }
+        .map do |input|
+          Watcher.new(
+            pin: input.fetch("pin"),
+            name: input.fetch("name"),
+            hold: input.fetch("hold", false),
+            publisher: publisher
+          )
+        end
     end
 
     def listener
       outputs = configuration.fetch("outputs", [])
 
-      return if outputs.empty?
+      if outputs.empty?
+        logger.warn "No outputs configured, skipping listener"
+        return
+      end
 
-      Listener.new(
-        host: mqtt_config.fetch("host"),
-        port: mqtt_config.fetch("port", nil),
-        username: mqtt_config.fetch("username", nil),
-        password: mqtt_config.fetch("password", nil),
-        topic_prefix: mqtt_config.fetch("topic_prefix"),
-        handler: handler
-      )
+      logger.debug "Initializing listener for #{outputs.size} outputs"
+      Listener.new(**mqtt_config, handler: handler)
     end
 
     def handler
@@ -47,17 +47,19 @@ module MqttToGpio
     end
 
     def publisher
-      @publisher ||= Publisher.new(
-        host: mqtt_config.fetch("host"),
-        port: mqtt_config.fetch("port", nil),
-        username: mqtt_config.fetch("username", nil),
-        password: mqtt_config.fetch("password", nil),
-        topic_prefix: mqtt_config.fetch("topic_prefix")
-      )
+      @publisher ||= Publisher.new(**mqtt_config)
     end
 
     def mqtt_config
-      configuration.fetch("mqtt")
+      configuration.fetch("mqtt").then do |config|
+        {
+          host: config.fetch("host"),
+          port: config.fetch("port", nil),
+          username: config.fetch("username", nil),
+          password: config.fetch("password", nil),
+          topic_prefix: config.fetch("topic_prefix"),
+        }
+      end
     end
   end
 end
