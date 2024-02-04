@@ -9,13 +9,14 @@ module MqttToGpio
       @name = name
       @hold = hold
       @publisher = publisher
-      @last_value = nil
+      @previous_value = nil
+      @current_value = nil
       @hold_count = 0
     end
 
     def run!
       Gpio.pin(pin, Gpio::INPUT) do |pin|
-        @last_state = pin.value
+        @previous_value = pin.value
 
         loop do
           sleep(polling_interval_in_seconds)
@@ -31,19 +32,31 @@ module MqttToGpio
     end
 
     def poll_pin(pin)
-      current_value = pin.value
-      value_changed = current_value != last_value
+      @previous_value = @current_value
+      @current_value = pin.value
 
-      if value_changed
-        @hold_count = 0 if current_value == Gpio::OFF
+      if value_changed?
+        @hold_count = 0 if pin_off?
         publisher.publish_state(name, current_value)
-      elsif hold? && current_value == Gpio::ON
+      elsif hold? && pin_on?
         @hold_count += 1
         publisher.publish_hold(name, @hold_count) if (@hold_count % hold_interval).zero?
       end
     end
 
-    attr_reader :pin, :name, :hold, :publisher
+    attr_reader :pin, :name, :hold, :publisher, :previous_value, :current_value
+
+    def value_changed?
+      previous_value != current_value
+    end
+
+    def pin_on?
+      current_value == Gpio::ON
+    end
+
+    def pin_off?
+      current_value == Gpio::OFF
+    end
 
     def hold?
       !hold.nil? && !hold.zero?
