@@ -80,7 +80,7 @@ module MqttToGpio
     end
 
     def hold?
-      !hold.nil? && !hold.zero?
+      hold && !hold.zero?
     end
 
     def hold_interval
