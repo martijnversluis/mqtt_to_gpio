@@ -19,7 +19,7 @@ module MqttToGpio
     def watchers
       configuration
         .fetch("inputs", [])
-        .tap { |inputs| logger.debug "Initializing #{inputs.size} watchers" }
+        .tap { |inputs| MqttToGpio.logger.debug "Initializing #{inputs.size} watchers" }
         .map do |input|
           Watcher.new(
             pin: input.fetch("pin"),
@@ -34,11 +34,11 @@ module MqttToGpio
       outputs = configuration.fetch("outputs", [])
 
       if outputs.empty?
-        logger.warn "No outputs configured, skipping listener"
+        MqttToGpio.logger.warn "No outputs configured, skipping listener"
         return
       end
 
-      logger.debug "Initializing listener for #{outputs.size} outputs"
+      MqttToGpio.logger.debug "Initializing listener for #{outputs.size} outputs"
       Listener.new(**mqtt_config, handler: handler)
     end
 

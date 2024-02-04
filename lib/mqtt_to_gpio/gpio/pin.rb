@@ -10,32 +10,32 @@ module MqttToGpio
       end
 
       def export
-        logger.debug "Exporting pin #{number}"
+        MqttToGpio.logger.debug "Exporting pin #{number}"
         File.write(Gpio::EXPORT_PATH, number)
-        logger.debug "Exporting pin #{number} succeeded"
+        MqttToGpio.logger.debug "Exporting pin #{number} succeeded"
       rescue Errno::EBUSY
-        logger.warn "Exporting pin #{number} failed: pin already exported"
+        MqttToGpio.logger.warn "Exporting pin #{number} failed: pin already exported"
         # Already exported
       end
 
       def unexport
-        logger.debug "Unexporting pin #{number}"
+        MqttToGpio.logger.debug "Unexporting pin #{number}"
         File.write(Gpio::UNEXPORT_PATH, number)
-        logger.debug "Unexporting pin #{number} succeeded"
+        MqttToGpio.logger.debug "Unexporting pin #{number} succeeded"
       end
 
       def direction
-        logger.debug "Reading direction of pin #{number}"
+        MqttToGpio.logger.debug "Reading direction of pin #{number}"
 
         File.read(direction_path).strip.tap do |direction|
-          logger.debug "Reading direction of pin #{number} succeeded: #{direction}"
+          MqttToGpio.logger.debug "Reading direction of pin #{number} succeeded: #{direction}"
         end
       end
 
       def direction=(value)
-        logger.debug "Setting direction of pin #{number} to #{value}"
+        MqttToGpio.logger.debug "Setting direction of pin #{number} to #{value}"
         File.write(direction_path, value)
-        logger.debug "Setting direction of pin #{number} to #{value} succeeded"
+        MqttToGpio.logger.debug "Setting direction of pin #{number} to #{value} succeeded"
       end
 
       def input?
@@ -55,17 +55,17 @@ module MqttToGpio
       end
 
       def value
-        logger.debug "Reading value of pin #{number}"
+        MqttToGpio.logger.debug "Reading value of pin #{number}"
 
         File.read(value_path).strip.tap do |value|
-          logger.debug "Reading value of pin #{number} succeeded: #{value}"
+          MqttToGpio.logger.debug "Reading value of pin #{number} succeeded: #{value}"
         end
       end
 
       def value=(value)
-        logger.debug "Setting value of pin #{number} to #{value}"
+        MqttToGpio.logger.debug "Setting value of pin #{number} to #{value}"
         File.write(value_path, value)
-        logger.debug "Setting value of pin #{number} to #{value} succeeded"
+        MqttToGpio.logger.debug "Setting value of pin #{number} to #{value} succeeded"
       end
 
       def on?

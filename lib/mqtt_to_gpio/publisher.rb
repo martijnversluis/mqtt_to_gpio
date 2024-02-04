@@ -27,7 +27,7 @@ module MqttToGpio
     attr_reader :host, :port, :username, :password, :topic_prefix
 
     def publish(device_id, state)
-      logger.debug("Publishing state #{state} for #{device_id}")
+      MqttToGpio.logger.debug("Publishing state #{state} for #{device_id}")
 
       Mqtt.publish(
         host: host,
