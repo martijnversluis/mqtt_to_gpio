@@ -64,20 +64,20 @@ module MqttToGpio
         MqttToGpio.logger.debug "Setting value of pin #{number} to #{value} succeeded"
       end
 
-      def on?
-        value == Gpio::ON
+      def high?
+        value == Gpio::HIGH
       end
 
-      def off?
-        value == Gpio::OFF
+      def low?
+        value == Gpio::LOW
       end
 
-      def on!
-        self.value = Gpio::ON
+      def high!
+        self.value = Gpio::HIGH
       end
 
-      def off!
-        self.value = Gpio::OFF
+      def low!
+        self.value = Gpio::LOW
       end
 
       private

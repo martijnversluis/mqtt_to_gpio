@@ -7,8 +7,8 @@ module MqttToGpio
     UNEXPORT_PATH = File.join(BASE_PATH, "unexport")
     INPUT = "in"
     OUTPUT = "out"
-    ON = "1"
-    OFF = "0"
+    HIGH = "1"
+    LOW = "0"
 
     def pin(number, direction, &block)
       Pin

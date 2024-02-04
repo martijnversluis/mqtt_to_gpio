@@ -71,12 +71,12 @@ module MqttToGpio
       previous_value != current_value
     end
 
-    def pin_on?
-      current_value == Gpio::ON
+    def pin_high?
+      current_value == Gpio::HIGH
     end
 
-    def pin_off?
-      current_value == Gpio::OFF
+    def pin_low?
+      current_value == Gpio::LOW
     end
 
     def hold?
