@@ -28,6 +28,13 @@ module MqttToGpio
 
     private
 
+    attr_reader :pin,
+                :name,
+                :hold,
+                :publisher,
+                :previous_value,
+                :current_value
+
     def polling_interval_in_seconds
       POLLING_INTERVAL_IN_MS / 1000.0
     end
@@ -43,6 +50,12 @@ module MqttToGpio
       end
     end
 
+    def handle_value_changed
+      MqttToGpio.logger.debug "Value changed for #{name} (pin #{pin}) from #{previous_value} to #{current_value}"
+      @hold_count = 0 if pin_off?
+      publisher.publish_state(name, current_value)
+    end
+
     def handle_pin_held
       @hold_count += 1
 
@@ -53,14 +66,6 @@ module MqttToGpio
                               "at #{current_value} for #{hold_index} intervals"
       publisher.publish_hold(name, hold_index)
     end
-
-    def handle_value_changed
-      MqttToGpio.logger.debug "Value changed for #{name} (pin #{pin}) from #{previous_value} to #{current_value}"
-      @hold_count = 0 if pin_off?
-      publisher.publish_state(name, current_value)
-    end
-
-    attr_reader :pin, :name, :hold, :publisher, :previous_value, :current_value
 
     def value_changed?
       previous_value != current_value
