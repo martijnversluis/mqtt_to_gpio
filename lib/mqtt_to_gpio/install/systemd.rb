@@ -22,7 +22,7 @@ module MqttToGpio
 
           [Service]
           Type=simple
-          User=pi
+          User=#{`whoami`.strip}
           WorkingDirectory=#{Dir.pwd}
           ExecStart=#{Gem.ruby} -I#{Dir.pwd}/lib #{Dir.pwd}/bin/mqtt_to_gpio #{Dir.pwd}/mqtt_to_gpio.yml
           Restart=on-failure
