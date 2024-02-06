@@ -24,7 +24,7 @@ module MqttToGpio
           Type=simple
           User=#{`whoami`.strip}
           WorkingDirectory=#{Dir.pwd}
-          ExecStart=#{Gem.ruby} -I#{Dir.pwd}/lib #{Dir.pwd}/bin/mqtt_to_gpio #{Dir.pwd}/mqtt_to_gpio.yml
+          ExecStart=#{`which mqtt_to_gpio`.strip} #{Dir.pwd}/mqtt_to_gpio.yml
           Restart=on-failure
 
           [Install]
