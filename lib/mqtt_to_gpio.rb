@@ -11,6 +11,10 @@ module MqttToGpio
       @logger ||= Logger.new($stdout)
     end
 
+    def install!
+      Install::Systemd.new.run!
+    end
+
     def run!(config_file)
       config = YAML.load_file(config_file)
       logger.debug "Starting server with configuration: #{config}"
@@ -22,6 +26,7 @@ end
 require_relative "mqtt_to_gpio/gpio"
 require_relative "mqtt_to_gpio/gpio/pin"
 require_relative "mqtt_to_gpio/handler"
+require_relative "mqtt_to_gpio/install/systemd"
 require_relative "mqtt_to_gpio/listener"
 require_relative "mqtt_to_gpio/mqtt"
 require_relative "mqtt_to_gpio/publisher"
