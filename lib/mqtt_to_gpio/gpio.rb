@@ -3,13 +3,14 @@
 module MqttToGpio
   module Gpio
     BASE_PATH = "/sys/class/gpio"
-    EXPORT_PATH = File.join(BASE_PATH, "export")
-    UNEXPORT_PATH = File.join(BASE_PATH, "unexport")
+    EXPORT_PATH_SUFFIX = "export"
+    UNEXPORT_PATH_SUFFIX = "unexport"
     INPUT = "in"
     OUTPUT = "out"
     HIGH = "1"
     LOW = "0"
 
+    module_function
     def pin(number, direction, &block)
       Pin
         .new(number)
@@ -20,6 +21,14 @@ module MqttToGpio
         .tap(&:unexport)
     end
 
-    module_function :pin
+    module_function
+    def export_path
+      File.join(BASE_PATH, EXPORT_PATH_SUFFIX)
+    end
+
+    module_function
+    def unexport_path
+      File.join(BASE_PATH, UNEXPORT_PATH_SUFFIX)
+    end
   end
 end
