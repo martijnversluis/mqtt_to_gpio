@@ -19,8 +19,7 @@ module MqttToGpio
         @previous_value = gpio_pin.value
         MqttToGpio.logger.debug "Starting watcher for #{name} (pin #{pin}), initial value: #{previous_value}"
 
-        loop do
-          sleep(polling_interval_in_seconds)
+        repeat(polling_interval_in_seconds) do
           poll_pin(gpio_pin)
         end
       end
@@ -34,6 +33,13 @@ module MqttToGpio
                 :publisher,
                 :previous_value,
                 :current_value
+
+    def repeat(polling_interval_in_seconds, &block)
+      loop do
+        sleep(polling_interval_in_seconds)
+        block.call
+      end
+    end
 
     def polling_interval_in_seconds
       POLLING_INTERVAL_IN_MS / 1000.0

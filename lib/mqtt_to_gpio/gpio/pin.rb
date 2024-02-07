@@ -11,7 +11,7 @@ module MqttToGpio
 
       def export
         MqttToGpio.logger.debug "Exporting pin #{number}"
-        File.write(Gpio::EXPORT_PATH, number)
+        File.write(Gpio.export_path, number)
         MqttToGpio.logger.debug "Exporting pin #{number} succeeded"
       rescue Errno::EBUSY
         MqttToGpio.logger.warn "Exporting pin #{number} failed: pin already exported"
@@ -20,7 +20,7 @@ module MqttToGpio
 
       def unexport
         MqttToGpio.logger.debug "Unexporting pin #{number}"
-        File.write(Gpio::UNEXPORT_PATH, number)
+        File.write(Gpio.unexport_path, number)
         MqttToGpio.logger.debug "Unexporting pin #{number} succeeded"
       end
 
@@ -81,17 +81,6 @@ module MqttToGpio
       end
 
       private
-
-      def with_retry(rescued_exceptions, attempts: 5, wait: 0.1, &_block)
-        attempts.times do
-          yield
-          return
-        rescue *rescued_exceptions
-          sleep wait
-        end
-
-        raise "Failed to perform operation after #{attempts} attempts"
-      end
 
       def value_path
         path("value")

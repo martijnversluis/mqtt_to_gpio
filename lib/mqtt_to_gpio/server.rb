@@ -33,8 +33,6 @@ module MqttToGpio
     end
 
     def listener
-      outputs = configuration.fetch("outputs", [])
-
       if outputs.empty?
         MqttToGpio.logger.warn "No outputs configured, skipping listener"
         return
@@ -46,6 +44,10 @@ module MqttToGpio
 
     def handler
       @handler ||= Handler.new(outputs)
+    end
+
+    def outputs
+      configuration.fetch("outputs", [])
     end
 
     def publisher
