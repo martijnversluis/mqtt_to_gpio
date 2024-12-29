@@ -9,7 +9,12 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
+    diff-lcs (1.5.1)
+    fuubar (2.5.1)
+      rspec-core (~> 3.0)
+      ruby-progressbar (~> 1.4)
     json (2.7.1)
+    json (2.7.1-java)
     language_server-protocol (3.17.0.3)
     mqtt (0.6.0)
     parallel (1.24.0)
@@ -17,10 +22,24 @@ GEM
       ast (~> 2.4.1)
       racc
     racc (1.7.3)
+    racc (1.7.3-java)
     rainbow (3.1.1)
     rake (13.1.0)
     regexp_parser (2.9.0)
     rexml (3.2.6)
+    rspec (3.13.0)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.0)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-support (3.13.0)
     ruboclean (0.4.0)
     rubocop (1.60.2)
       json (~> 2.3)
@@ -40,10 +59,16 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  arm64-darwin-22
+  arm64-darwin-23
+  universal-java-21
+  x86_64-linux
 
 DEPENDENCIES
+  fuubar (~> 2.5)
   mqtt_to_gpio!
   rake (~> 13.0)
+  rspec (~> 3.13)
   ruboclean (~> 0.4.0)
   rubocop (~> 1.21)
 
